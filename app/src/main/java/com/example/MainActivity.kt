@@ -3391,7 +3391,6 @@ fun GoogleSelectorDialog(
     onDismiss: () -> Unit,
     onSelect: (email: String, name: String, avatar: String) -> Unit
 ) {
-    var customMode by remember { mutableStateOf(false) }
     var currentStep by remember { mutableStateOf(1) } // 1: Email, 2: Password, 3: Loading
     
     var emailInput by remember { mutableStateOf("") }
@@ -3430,7 +3429,7 @@ fun GoogleSelectorDialog(
                             fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace
                         )
                         Text(
-                            text = if (customMode) "مصادقة الهوية الموحدة الآمنة (OAuth 2.0)" else "بروتوكول الاختيار السريع لحلول جوجل",
+                            text = "مصادقة الهوية الموحدة الآمنة (OAuth 2.0)",
                             color = TextSecondaryGreen,
                             style = MaterialTheme.typography.bodySmall,
                             fontSize = 9.sp
@@ -3448,252 +3447,159 @@ fun GoogleSelectorDialog(
                     .padding(vertical = 10.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                if (!customMode) {
-                    // Case 1: Standard Pickers
-                    Text(
-                        text = "> اختر حساب مصادقة للاتصال التلقائي السريع:",
-                        color = TextPrimaryGreen,
-                        style = MaterialTheme.typography.bodySmall,
-                        fontSize = 11.sp,
-                        fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace
-                    )
-
-                    val accounts = listOf(
-                        Triple("asdasd9090asdasd90@gmail.com", "المستخدم الهجين المتصل (Hybrid)", "avatar1"),
-                        Triple("coder.matrix.hack@gmail.com", "المهندس الرقمي (Cyber Engineer)", "dev"),
-                        Triple("robot.unit.0x@gmail.com", "الوحدة البرمجية (Robotic Unit)", "avatar3")
-                    )
-
-                    accounts.forEach { (email, name, avatar) ->
-                        Card(
-                            onClick = { onSelect(email, name, avatar) },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .border(1.dp, GreenNeon.copy(alpha = 0.3f), RoundedCornerShape(12.dp)),
-                            colors = CardDefaults.cardColors(containerColor = Color(0xFF1E2E1E))
-                        ) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(12.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(10.dp)
-                            ) {
-                                UserAvatarIcon(avatarUrl = avatar, size = 32.dp, glow = true)
-                                Column {
-                                    Text(
-                                        text = name,
-                                        color = TextPrimaryGreen,
-                                        fontSize = 12.sp,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                    Text(
-                                        text = email,
-                                        color = YellowFlash,
-                                        fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
-                                        fontSize = 10.sp
-                                    )
-                                }
-                            }
-                        }
-                    }
-
-                    // Button to toggle Custom Real-like connection
-                    Card(
-                        onClick = { customMode = true },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .border(1.2.dp, YellowFlash.copy(alpha = 0.8f), RoundedCornerShape(12.dp)),
-                        colors = CardDefaults.cardColors(containerColor = Color(0xFF2B210F))
-                    ) {
+                // Case: Custom Realistic Gmail/Google Login Flow!
+                when (currentStep) {
+                    1 -> {
+                        // Step 1: Email Input
+                        Text(
+                            text = "تسجيل الدخول باستخدام Google",
+                            color = TextPrimaryGreen,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 14.sp
+                        )
+                        Text(
+                            text = "انتقل للمتابعة والمصادقة في استوديو TV",
+                            color = TextSecondaryGreen,
+                            fontSize = 10.sp
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        OutlinedTextField(
+                            value = emailInput,
+                            onValueChange = { emailInput = it },
+                            label = { Text("البريد الإلكتروني للـ Google") },
+                            placeholder = { Text("example@gmail.com") },
+                            singleLine = true,
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = GreenNeon,
+                                unfocusedBorderColor = Color(0xFF2E3E2E),
+                                focusedTextColor = TextPrimaryGreen,
+                                unfocusedTextColor = TextPrimaryGreen
+                            )
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
                         Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(12.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.End,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(32.dp)
-                                    .background(Color.White.copy(alpha = 0.05f), CircleShape)
-                                    .border(1.dp, YellowFlash, CircleShape),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(Icons.Default.Add, contentDescription = null, tint = YellowFlash, modifier = Modifier.size(16.dp))
-                            }
-                            Column {
-                                Text(
-                                    text = "📧 استخدام حساب Google آخر حقيقي",
-                                    color = TextPrimaryGreen,
-                                    fontSize = 11.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                                Text(
-                                    text = "تسجيل دخول آمن بأي حساب Google شخصي لك ومزامنة الاسم والصورة",
-                                    color = YellowFlash,
-                                    fontSize = 9.sp
-                                )
-                            }
-                        }
-                    }
-                } else {
-                    // Case 2: Custom Realistic Gmail/Google Login Flow!
-                    when (currentStep) {
-                        1 -> {
-                            // Step 1: Email Input
-                            Text(
-                                text = "تسجيل الدخول باستخدام Google",
-                                color = TextPrimaryGreen,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 14.sp
-                            )
-                            Text(
-                                text = "انتقل للمتابعة والمصادقة في استوديو TV",
-                                color = TextSecondaryGreen,
-                                fontSize = 10.sp
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            OutlinedTextField(
-                                value = emailInput,
-                                onValueChange = { emailInput = it },
-                                label = { Text("البريد الإلكتروني للـ Google") },
-                                placeholder = { Text("example@gmail.com") },
-                                singleLine = true,
-                                modifier = Modifier.fillMaxWidth(),
-                                colors = OutlinedTextFieldDefaults.colors(
-                                    focusedBorderColor = GreenNeon,
-                                    unfocusedBorderColor = Color(0xFF2E3E2E),
-                                    focusedTextColor = TextPrimaryGreen,
-                                    unfocusedTextColor = TextPrimaryGreen
-                                )
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                TextButton(onClick = { customMode = false }) {
-                                    Text("رجوع للحسابات السريعة", color = TextSecondaryGreen, fontSize = 11.sp)
-                                }
-                                Button(
-                                    onClick = {
-                                        if (emailInput.isNotBlank() && (emailInput.contains("@") || emailInput.length > 5)) {
-                                            currentStep = 2
-                                        } else {
-                                            Toast.makeText(context, "الرجاء كتابة بريد إلكتروني صحيح", Toast.LENGTH_SHORT).show()
-                                        }
-                                    },
-                                    colors = ButtonDefaults.buttonColors(containerColor = GreenNeon, contentColor = Color.Black),
-                                    shape = RoundedCornerShape(8.dp)
-                                ) {
-                                    Text("التالي", fontWeight = FontWeight.Bold)
-                                }
-                            }
-                        }
-                        2 -> {
-                            // Step 2: Password Input
-                            Text(
-                                text = "مرحباً بك، نسعد بمصادقتك",
-                                color = TextPrimaryGreen,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 14.sp
-                            )
-                            Text(
-                                text = "البريد الإلكتروني: $emailInput",
-                                color = YellowFlash,
-                                fontSize = 11.sp,
-                                fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            OutlinedTextField(
-                                value = passwordInput,
-                                onValueChange = { passwordInput = it },
-                                label = { Text("أدخل كلمة مرور حساب قوقل") },
-                                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                                trailingIcon = {
-                                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                                        Icon(
-                                            imageVector = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                                            contentDescription = null,
-                                            tint = TextSecondaryGreen
-                                        )
+                            Button(
+                                onClick = {
+                                    if (emailInput.isNotBlank() && (emailInput.contains("@") || emailInput.length > 5)) {
+                                        currentStep = 2
+                                    } else {
+                                        Toast.makeText(context, "الرجاء كتابة بريد إلكتروني صحيح", Toast.LENGTH_SHORT).show()
                                     }
                                 },
-                                singleLine = true,
-                                modifier = Modifier.fillMaxWidth(),
-                                colors = OutlinedTextFieldDefaults.colors(
-                                    focusedBorderColor = GreenNeon,
-                                    unfocusedBorderColor = Color(0xFF2E3E2E),
-                                    focusedTextColor = TextPrimaryGreen,
-                                    unfocusedTextColor = TextPrimaryGreen
-                                )
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
+                                colors = ButtonDefaults.buttonColors(containerColor = GreenNeon, contentColor = Color.Black),
+                                shape = RoundedCornerShape(8.dp)
                             ) {
-                                TextButton(onClick = { currentStep = 1 }) {
-                                    Text("رجوع", color = TextSecondaryGreen, fontSize = 11.sp)
-                                }
-                                Button(
-                                    onClick = {
-                                        if (passwordInput.length >= 4) {
-                                            currentStep = 3
-                                        } else {
-                                            Toast.makeText(context, "تنبيه: كلمة المرور قصيرة جداً لحماية الحساب", Toast.LENGTH_SHORT).show()
-                                        }
-                                    },
-                                    colors = ButtonDefaults.buttonColors(containerColor = GreenNeon, contentColor = Color.Black),
-                                    shape = RoundedCornerShape(8.dp)
-                                ) {
-                                    Text("تسجيل الدخول", fontWeight = FontWeight.Bold)
-                                }
+                                Text("التالي", fontWeight = FontWeight.Bold)
                             }
                         }
-                        3 -> {
-                            // Step 3: Realistic connecting loader!
-                            var loadMsg by remember { mutableStateOf("جاري الربط مع قنوات مصادقة Google الموحدة...") }
-                            
-                            LaunchedEffect(Unit) {
-                                kotlinx.coroutines.delay(800)
-                                loadMsg = "تم التحقق وصنع تشفير آمن لرمز Google OAuth 2.0 الآمن..."
-                                kotlinx.coroutines.delay(1000)
-                                loadMsg = "جاري تعيين وإصدار معلومات الهوية الرقمية للمستخدم الأصيل..."
-                                kotlinx.coroutines.delay(700)
-                                
-                                val prefix = emailInput.substringBefore("@")
-                                val formattedName = prefix.replaceFirstChar { if (it.isLowerCase()) it.titlecase(java.util.Locale.getDefault()) else it.toString() }
-                                val generatedAvatar = "avatar" + ((1..5).random())
-                                onSelect(emailInput.trim(), formattedName, generatedAvatar)
-                            }
-
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 12.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center
-                            ) {
-                                Row(
-                                    horizontalArrangement = Arrangement.spacedBy(6.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    CircularProgressIndicator(color = GreenNeon, modifier = Modifier.size(24.dp), strokeWidth = 2.dp)
-                                    Spacer(modifier = Modifier.width(6.dp))
-                                    Text("بروتوكول التحقق نشط...", color = YellowFlash, fontSize = 12.sp, fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace)
+                    }
+                    2 -> {
+                        // Step 2: Password Input
+                        Text(
+                            text = "مرحباً بك، نسعد بمصادقتك",
+                            color = TextPrimaryGreen,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 14.sp
+                        )
+                        Text(
+                            text = "البريد الإلكتروني: $emailInput",
+                            color = YellowFlash,
+                            fontSize = 11.sp,
+                            fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        OutlinedTextField(
+                            value = passwordInput,
+                            onValueChange = { passwordInput = it },
+                            label = { Text("أدخل كلمة مرور حساب قوقل") },
+                            placeholder = { Text("••••••••") },
+                            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                            trailingIcon = {
+                                IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                                    Icon(
+                                        imageVector = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                                        contentDescription = null,
+                                        tint = TextSecondaryGreen
+                                    )
                                 }
-                                Spacer(modifier = Modifier.height(14.dp))
-                                Text(
-                                    text = loadMsg,
-                                    color = TextPrimaryGreen,
-                                    fontSize = 11.sp,
-                                    textAlign = TextAlign.Center
-                                )
+                            },
+                            singleLine = true,
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = GreenNeon,
+                                unfocusedBorderColor = Color(0xFF2E3E2E),
+                                focusedTextColor = TextPrimaryGreen,
+                                unfocusedTextColor = TextPrimaryGreen
+                            )
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            TextButton(onClick = { currentStep = 1 }) {
+                                Text("رجوع", color = TextSecondaryGreen, fontSize = 11.sp)
                             }
+                            Button(
+                                onClick = {
+                                    if (passwordInput.length >= 4) {
+                                        currentStep = 3
+                                    } else {
+                                        Toast.makeText(context, "تنبيه: كلمة المرور قصيرة جداً لحماية الحساب", Toast.LENGTH_SHORT).show()
+                                    }
+                                },
+                                colors = ButtonDefaults.buttonColors(containerColor = GreenNeon, contentColor = Color.Black),
+                                shape = RoundedCornerShape(8.dp)
+                            ) {
+                                Text("تسجيل الدخول", fontWeight = FontWeight.Bold)
+                            }
+                        }
+                    }
+                    3 -> {
+                        // Step 3: Realistic connecting loader!
+                        var loadMsg by remember { mutableStateOf("جاري الربط مع قنوات مصادقة Google الموحدة...") }
+                        
+                        LaunchedEffect(Unit) {
+                            kotlinx.coroutines.delay(800)
+                            loadMsg = "تم التحقق وصنع تشفير آمن لرمز Google OAuth 2.0 الآمن..."
+                            kotlinx.coroutines.delay(1000)
+                            loadMsg = "جاري تعيين وإصدار معلومات الهوية الرقمية للمستخدم الأصيل..."
+                            kotlinx.coroutines.delay(700)
+                            
+                            val prefix = emailInput.substringBefore("@")
+                            val formattedName = prefix.replaceFirstChar { if (it.isLowerCase()) it.titlecase(java.util.Locale.getDefault()) else it.toString() }
+                            val generatedAvatar = "avatar" + ((1..5).random())
+                            onSelect(emailInput.trim(), formattedName, generatedAvatar)
+                        }
+
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 12.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                CircularProgressIndicator(color = GreenNeon, modifier = Modifier.size(24.dp), strokeWidth = 2.dp)
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text("بروتوكول التحقق نشط...", color = YellowFlash, fontSize = 12.sp, fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace)
+                            }
+                            Spacer(modifier = Modifier.height(14.dp))
+                            Text(
+                                text = loadMsg,
+                                color = TextPrimaryGreen,
+                                fontSize = 11.sp,
+                                textAlign = TextAlign.Center
+                            )
                         }
                     }
                 }
