@@ -20,16 +20,17 @@ jobs:
         distribution: 'temurin'
 
     - name: Create Real .env File
-      run: echo "GEMINI_API_KEY=AIzaSyDlb2kS86L0vEqoYsbfAPpgLYIY6LqsAo0" > .env
+      run: echo "GEMINI_API_KEY=اAIzaSyDlb2kS86L0vEqoYsbfAPpgLYIY6LqsAo0" > .env
 
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v4
 
     - name: Build with Gradle
-      run: gradle assembleDebug
+      run: gradle assembleDebug -Pandroid.packageBuildConfig=true || gradle assembleRelease
 
-    - name: Upload APK
+    - name: Find and Upload APK
       uses: actions/upload-artifact@v4
       with:
-        name: app-debug
-        path: app/build/outputs/apk/debug/app-debug.apk
+        name: app-files
+        path: |
+          app/build/outputs/apk/**/*.apk
