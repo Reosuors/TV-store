@@ -1,0 +1,6 @@
+{
+  "name": "TV store",
+  "description": "منصة متكاملة لعرض ومشاركة الألعاب المصنوعة، الروايات وفصولها، الفيديوهات، الصور، الأخبار، والنماذج ثلاثية الأبعاد مع دردشة مخصصة لكل قسم، وتفاعل كامل ونظام حسابات عادي ومطور مستودع TV store.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
